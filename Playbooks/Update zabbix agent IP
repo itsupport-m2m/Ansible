@@ -1,0 +1,25 @@
+---
+- name: Update Zabbix agent IP address
+  hosts: all
+  become: true
+  vars:
+    new_zabbix_server_ip: "1.2.3.4"
+  tasks:
+    - name: Ensure the Zabbix agent configuration file exists
+      stat:
+        path: "/etc/zabbix/zabbix_agent2.conf"
+      register: zabbix_conf_file
+
+    - name: Update Zabbix server IP in the configuration file
+      replace:
+        path: "/etc/zabbix/zabbix_agent2.conf"
+        regexp: '^Server=.*'
+        replace: "Server={{ new_zabbix_server_ip }}"
+      when: zabbix_conf_file.stat.exists
+      notify: Restart Zabbix agent
+
+  handlers:
+    - name: Restart Zabbix agent
+      service:
+        name: zabbix-agent2
+        state: restarted
