@@ -34,7 +34,7 @@
       register: java_version
       ignore_errors: yes
 
-    - name: Display HiveMQ Configuration
+    - name: Display HiveMQ Service Configuration
       command: cat /etc/systemd/system/hivemq.service
       register: hivemq_service
       ignore_errors: yes
@@ -49,7 +49,7 @@
       register: hivemq_plugins
       ignore_errors: yes
 
-    - name: Display HiveMQ Environment Variables
+    - name: Display Java Home
       shell: echo $JAVA_HOME
       register: java_home
       ignore_errors: yes
