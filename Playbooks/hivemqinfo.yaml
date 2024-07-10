@@ -13,46 +13,55 @@
       shell: systemctl status hivemq | grep 'Loaded:'
       register: hivemq_status
       ignore_errors: yes
+      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ Memory Usage
       shell: systemctl status hivemq | grep 'Memory:'
       register: hivemq_memory
       ignore_errors: yes
+      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ CPU Usage
       shell: systemctl status hivemq | grep 'CPU:'
       register: hivemq_cpu
       ignore_errors: yes
+      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ Main PID
       shell: systemctl status hivemq | grep 'Main PID:'
       register: hivemq_pid
       ignore_errors: yes
+      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ Java Version
       shell: java -version
       register: java_version
       ignore_errors: yes
+      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ Service Configuration
       command: cat /etc/systemd/system/hivemq.service
       register: hivemq_service
       ignore_errors: yes
+      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ Log
       shell: tail -n 20 /opt/hivemq/log/hivemq.log
       register: hivemq_log
       ignore_errors: yes
+      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ Plugins
       shell: ls /opt/hivemq/plugins
       register: hivemq_plugins
       ignore_errors: yes
+      changed_when: false  # Mark the task as not changed
 
     - name: Display Java Home
       shell: echo $JAVA_HOME
       register: java_home
       ignore_errors: yes
+      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ System Information
       debug:
@@ -75,3 +84,7 @@
           {{ hivemq_plugins.stdout | default("Not available") }}
           --- Java Home ---
           {{ java_home.stdout | default("Not available") }}
+
+  # Suppress "changed" output for all tasks in this playbook
+  ignore_errors: yes
+  changed_when: false
