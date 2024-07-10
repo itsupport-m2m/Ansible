@@ -1,0 +1,47 @@
+---
+- name: Gather Information from HiveMQ Machines
+  hosts: hivemq_nodes  # Replace with your actual group or host(s) name
+  gather_facts: yes
+  become: no
+  become_user: root
+
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+  tasks:
+    - name: Display HiveMQ Version
+      command: hivemq --version
+      register: hivemq_version
+      changed_when: false
+
+    - name: Display HiveMQ Configuration
+      command: cat /opt/hivemq/conf/config.xml
+      register: hivemq_config
+      changed_when: false
+
+    - name: Display HiveMQ Log File
+      command: tail -n 20 /opt/hivemq/log/hivemq.log
+      register: hivemq_logs
+      changed_when: false
+
+    - name: Display HiveMQ Plugins
+      command: ls /opt/hivemq/plugins
+      register: hivemq_plugins
+      changed_when: false
+
+    - name: Display HiveMQ Java Version
+      command: java -version
+      register: java_version
+      changed_when: false
+
+    - name: Display HiveMQ System Information
+      debug:
+        msg: |
+          HiveMQ Version: {{ hivemq_version.stdout }}
+          Java Version: {{ java_version.stdout }}
+          --- Configuration ---
+          {{ hivemq_config.stdout }}
+          --- Last 20 lines of Logs ---
+          {{ hivemq_logs.stdout }}
+          --- Plugins ---
+          {{ hivemq_plugins.stdout }}
