@@ -1,5 +1,5 @@
 ---
-- name: Gather Information from HiveMQ Machines
+- name: Gather Basic Information from HiveMQ
   hosts: all
   gather_facts: no
   become: yes
@@ -10,64 +10,50 @@
 
   tasks:
     - name: Display HiveMQ Version
-      shell: systemctl status hivemq | grep 'Loaded:'
-      register: hivemq_status
+      command: systemctl status hivemq | grep 'Loaded:'
+      register: hivemq_version
       ignore_errors: yes
-      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ Memory Usage
-      shell: systemctl status hivemq | grep 'Memory:'
+      command: systemctl status hivemq | grep 'Memory:'
       register: hivemq_memory
       ignore_errors: yes
-      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ CPU Usage
-      shell: systemctl status hivemq | grep 'CPU:'
+      command: systemctl status hivemq | grep 'CPU:'
       register: hivemq_cpu
       ignore_errors: yes
-      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ Main PID
-      shell: systemctl status hivemq | grep 'Main PID:'
+      command: systemctl status hivemq | grep 'Main PID:'
       register: hivemq_pid
       ignore_errors: yes
-      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ Java Version
-      shell: java -version
+      command: java -version
       register: java_version
       ignore_errors: yes
-      changed_when: false  # Mark the task as not changed
 
     - name: Display HiveMQ Service Configuration
       command: cat /etc/systemd/system/hivemq.service
       register: hivemq_service
       ignore_errors: yes
-      changed_when: false  # Mark the task as not changed
 
-    - name: Display HiveMQ Log
-      shell: tail -n 20 /opt/hivemq/log/hivemq.log
+    - name: Display Last 20 lines of HiveMQ Log
+      command: tail -n 20 /opt/hivemq/log/hivemq.log
       register: hivemq_log
       ignore_errors: yes
-      changed_when: false  # Mark the task as not changed
-
-    - name: Display HiveMQ Plugins
-      shell: ls /opt/hivemq/plugins
-      register: hivemq_plugins
-      ignore_errors: yes
-      changed_when: false  # Mark the task as not changed
 
     - name: Display Java Home
-      shell: echo $JAVA_HOME
+      command: echo $JAVA_HOME
       register: java_home
       ignore_errors: yes
-      changed_when: false  # Mark the task as not changed
 
-    - name: Display HiveMQ System Information
+    - name: Display Basic HiveMQ Information
       debug:
         msg: |
-          --- HiveMQ Status ---
-          {{ hivemq_status.stdout | default("Not available") }}
+          --- HiveMQ Version ---
+          {{ hivemq_version.stdout | default("Not available") }}
           --- Memory Usage ---
           {{ hivemq_memory.stdout | default("Not available") }}
           --- CPU Usage ---
@@ -80,11 +66,5 @@
           {{ hivemq_service.stdout | default("Not available") }}
           --- Last 20 lines of HiveMQ Log ---
           {{ hivemq_log.stdout | default("Not available") }}
-          --- HiveMQ Plugins ---
-          {{ hivemq_plugins.stdout | default("Not available") }}
           --- Java Home ---
           {{ java_home.stdout | default("Not available") }}
-
-  # Suppress "changed" output for all tasks in this playbook
-  ignore_errors: yes
-  changed_when: false
