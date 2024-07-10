@@ -1,6 +1,6 @@
 ---
 - name: Gather Information from HiveMQ Machines
-  hosts: hivemq_nodes  # Replace with your actual group or host(s) name
+  hosts: all
   gather_facts: yes
   become: no
   become_user: root
