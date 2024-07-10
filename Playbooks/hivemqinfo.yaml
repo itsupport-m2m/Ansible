@@ -9,62 +9,14 @@
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
   tasks:
-    - name: Display HiveMQ Version
-      command: systemctl status hivemq | grep 'Loaded:'
-      register: hivemq_version
-      ignore_errors: yes
-
-    - name: Display HiveMQ Memory Usage
-      command: systemctl status hivemq | grep 'Memory:'
-      register: hivemq_memory
-      ignore_errors: yes
-
-    - name: Display HiveMQ CPU Usage
-      command: systemctl status hivemq | grep 'CPU:'
-      register: hivemq_cpu
-      ignore_errors: yes
-
-    - name: Display HiveMQ Main PID
-      command: systemctl status hivemq | grep 'Main PID:'
-      register: hivemq_pid
-      ignore_errors: yes
-
-    - name: Display HiveMQ Java Version
-      command: java -version
-      register: java_version
-      ignore_errors: yes
-
     - name: Display HiveMQ Service Configuration
       command: cat /etc/systemd/system/hivemq.service
       register: hivemq_service
       ignore_errors: yes
 
-    - name: Display Last 20 lines of HiveMQ Log
-      command: tail -n 20 /opt/hivemq/log/hivemq.log
-      register: hivemq_log
-      ignore_errors: yes
-
-    - name: Display Java Home
-      command: echo $JAVA_HOME
-      register: java_home
-      ignore_errors: yes
-
     - name: Display Basic HiveMQ Information
       debug:
         msg: |
-          --- HiveMQ Version ---
-          {{ hivemq_version.stdout | default("Not available") }}
-          --- Memory Usage ---
-          {{ hivemq_memory.stdout | default("Not available") }}
-          --- CPU Usage ---
-          {{ hivemq_cpu.stdout | default("Not available") }}
-          --- Main PID ---
-          {{ hivemq_pid.stdout | default("Not available") }}
-          --- Java Version ---
-          {{ java_version.stderr | default("Not available") }}
           --- HiveMQ Service Configuration ---
           {{ hivemq_service.stdout | default("Not available") }}
-          --- Last 20 lines of HiveMQ Log ---
-          {{ hivemq_log.stdout | default("Not available") }}
-          --- Java Home ---
-          {{ java_home.stdout | default("Not available") }}
+
