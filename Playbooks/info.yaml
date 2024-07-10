@@ -1,8 +1,9 @@
 ---
 - name: Gather Information from Ubuntu Machines
-  hosts: your_ubuntu_hosts  # Replace with your host group or individual hosts
+  hosts: all
   gather_facts: yes
-  become: no  # No need for privilege escalation to gather facts
+  become: no
+  become_user: root
 
   tasks:
     - name: Display Ubuntu facts
