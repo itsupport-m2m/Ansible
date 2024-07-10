@@ -5,27 +5,30 @@
   become: no
   become_user: root
 
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
   tasks:
-    - name: Display Ubuntu facts
+    - name: Display Ubuntu distribution
       debug:
-        var: ansible_facts.ansible_distribution
+        var: ansible_facts['distribution']
 
     - name: Display OS kernel version
       debug:
-        var: ansible_facts.ansible_kernel
+        var: ansible_facts['kernel']
 
     - name: Display available memory
       debug:
-        var: ansible_facts.memtotal_mb
+        var: ansible_facts['memtotal_mb']
 
     - name: Display network interfaces
       debug:
-        var: ansible_facts.interfaces
+        var: ansible_facts['interfaces']
 
     - name: Display IPv4 addresses
       debug:
-        var: ansible_facts.default_ipv4.address
+        var: ansible_facts['default_ipv4']['address']
 
     - name: Display IPv6 addresses
       debug:
-        var: ansible_facts.default_ipv6.address
+        var: ansible_facts['default_ipv6']['address']
