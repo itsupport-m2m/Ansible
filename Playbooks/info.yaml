@@ -1,0 +1,30 @@
+---
+- name: Gather Information from Ubuntu Machines
+  hosts: your_ubuntu_hosts  # Replace with your host group or individual hosts
+  gather_facts: yes
+  become: no  # No need for privilege escalation to gather facts
+
+  tasks:
+    - name: Display Ubuntu facts
+      debug:
+        var: ansible_facts.ansible_distribution
+
+    - name: Display OS kernel version
+      debug:
+        var: ansible_facts.ansible_kernel
+
+    - name: Display available memory
+      debug:
+        var: ansible_facts.memtotal_mb
+
+    - name: Display network interfaces
+      debug:
+        var: ansible_facts.interfaces
+
+    - name: Display IPv4 addresses
+      debug:
+        var: ansible_facts.default_ipv4.address
+
+    - name: Display IPv6 addresses
+      debug:
+        var: ansible_facts.default_ipv6.address
