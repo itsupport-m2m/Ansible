@@ -28,7 +28,4 @@
     - name: Display IPv4 addresses
       debug:
         var: ansible_facts['default_ipv4']['address']
-
-    - name: Display IPv6 addresses
-      debug:
-        var: ansible_facts['default_ipv6']['address']
+        
