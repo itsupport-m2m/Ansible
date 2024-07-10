@@ -1,8 +1,8 @@
 ---
 - name: Gather Information from HiveMQ Machines
   hosts: all
-  gather_facts: yes
-  become: no
+  gather_facts: no
+  become: yes
   become_user: root
 
   vars:
@@ -10,38 +10,68 @@
 
   tasks:
     - name: Display HiveMQ Version
-      command: hivemq --version
-      register: hivemq_version
-      changed_when: false
+      shell: systemctl status hivemq | grep 'Loaded:'
+      register: hivemq_status
+      ignore_errors: yes
 
-    - name: Display HiveMQ Configuration
-      command: cat /opt/hivemq/conf/config.xml
-      register: hivemq_config
-      changed_when: false
+    - name: Display HiveMQ Memory Usage
+      shell: systemctl status hivemq | grep 'Memory:'
+      register: hivemq_memory
+      ignore_errors: yes
 
-    - name: Display HiveMQ Log File
-      command: tail -n 20 /opt/hivemq/log/hivemq.log
-      register: hivemq_logs
-      changed_when: false
+    - name: Display HiveMQ CPU Usage
+      shell: systemctl status hivemq | grep 'CPU:'
+      register: hivemq_cpu
+      ignore_errors: yes
 
-    - name: Display HiveMQ Plugins
-      command: ls /opt/hivemq/plugins
-      register: hivemq_plugins
-      changed_when: false
+    - name: Display HiveMQ Main PID
+      shell: systemctl status hivemq | grep 'Main PID:'
+      register: hivemq_pid
+      ignore_errors: yes
 
     - name: Display HiveMQ Java Version
-      command: java -version
+      shell: java -version
       register: java_version
-      changed_when: false
+      ignore_errors: yes
+
+    - name: Display HiveMQ Configuration
+      command: cat /etc/systemd/system/hivemq.service
+      register: hivemq_service
+      ignore_errors: yes
+
+    - name: Display HiveMQ Log
+      shell: tail -n 20 /opt/hivemq/log/hivemq.log
+      register: hivemq_log
+      ignore_errors: yes
+
+    - name: Display HiveMQ Plugins
+      shell: ls /opt/hivemq/plugins
+      register: hivemq_plugins
+      ignore_errors: yes
+
+    - name: Display HiveMQ Environment Variables
+      shell: echo $JAVA_HOME
+      register: java_home
+      ignore_errors: yes
 
     - name: Display HiveMQ System Information
       debug:
         msg: |
-          HiveMQ Version: {{ hivemq_version.stdout }}
-          Java Version: {{ java_version.stdout }}
-          --- Configuration ---
-          {{ hivemq_config.stdout }}
-          --- Last 20 lines of Logs ---
-          {{ hivemq_logs.stdout }}
-          --- Plugins ---
-          {{ hivemq_plugins.stdout }}
+          --- HiveMQ Status ---
+          {{ hivemq_status.stdout | default("Not available") }}
+          --- Memory Usage ---
+          {{ hivemq_memory.stdout | default("Not available") }}
+          --- CPU Usage ---
+          {{ hivemq_cpu.stdout | default("Not available") }}
+          --- Main PID ---
+          {{ hivemq_pid.stdout | default("Not available") }}
+          --- Java Version ---
+          {{ java_version.stderr | default("Not available") }}
+          --- HiveMQ Service Configuration ---
+          {{ hivemq_service.stdout | default("Not available") }}
+          --- Last 20 lines of HiveMQ Log ---
+          {{ hivemq_log.stdout | default("Not available") }}
+          --- HiveMQ Plugins ---
+          {{ hivemq_plugins.stdout | default("Not available") }}
+          --- Java Home ---
+          {{ java_home.stdout | default("Not available") }}
